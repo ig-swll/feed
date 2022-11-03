@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { formatDistanceToNow, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import styles from './Post.module.css';
+import { Comment } from './Comment';
 
 interface PostProps {
   author: string;
@@ -38,10 +39,25 @@ export function Post(props: PostProps) {
           <a href="#">Adipiscing elit</a>{' '}
         </p>
         <p>
-          <a href="#">#loremipsum</a>{' '}
-          <a href="#">#hashtag</a>{' '}
+          <a href="#">#loremipsum</a> <a href="#">#hashtag</a>{' '}
           <a href="#">#dev</a>{' '}
         </p>
+      </div>
+
+      <form className={styles.commentForm}>
+        <strong>Deixe seu feedback</strong>
+
+        <textarea placeholder="Deixe um comentário" />
+
+        <footer>
+          <button type="submit">Publicar</button>
+        </footer>
+      </form>
+
+      <div className={styles.commentList}>
+        <Comment />
+        <Comment />
+        <Comment />
       </div>
     </article>
   );
