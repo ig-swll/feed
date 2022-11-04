@@ -3,6 +3,7 @@ import { formatDistanceToNow, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import styles from './Post.module.css';
 import { Comment } from './Comment';
+import { Avatar } from './Avatar';
 
 interface PostProps {
   author: string;
@@ -22,7 +23,7 @@ export function Post(props: PostProps) {
     <article className={styles.post}>
       <header>
         <div className={styles.author}>
-          <img className={styles.avatar} src="https://i.pravatar.cc/64" />
+          <Avatar src="https://i.pravatar.cc/64" outlined />
           <div className={styles.authorInfo}>
             <strong>User name</strong>
             <span>User Role</span>

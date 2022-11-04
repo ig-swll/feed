@@ -2,6 +2,7 @@ import { format, formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { ThumbsUp, Trash } from 'phosphor-react';
 import { useMemo } from 'react';
+import { Avatar } from './Avatar';
 
 import styles from './Comment.module.css';
 
@@ -16,7 +17,7 @@ export function Comment() {
 
   return (
     <div className={styles.comment}>
-      <img className={styles.avatar} src="https://i.pravatar.cc/64" />
+      <Avatar src="https://i.pravatar.cc/64" />
 
       <div className={styles.commentBox}>
         <div className={styles.commentContent}>
