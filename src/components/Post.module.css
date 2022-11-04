@@ -16,6 +16,7 @@
 
 .content p {
   margin-top: 1rem;
+  white-space: pre-wrap;
 }
 
 .content a {
@@ -78,7 +79,6 @@
   color: var(--gray-100);
   line-height: 1.4;
   margin-top: 1rem;
-
 }
 
 .commentForm textarea:focus {
@@ -114,4 +114,9 @@
 
 .commentForm button[type=submit]:hover {
   background: var(--green-300);
+}
+
+.commentForm button[type=submit]:disabled {
+  background: var(--gray-400);
+  cursor: not-allowed;
 }

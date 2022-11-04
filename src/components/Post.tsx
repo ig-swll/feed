@@ -1,64 +1,148 @@
-import { useMemo } from 'react';
+import {
+  ChangeEvent,
+  EventHandler,
+  FormEvent,
+  InvalidEvent,
+  KeyboardEvent,
+  useState,
+} from 'react';
 import { formatDistanceToNow, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import styles from './Post.module.css';
 import { Comment } from './Comment';
 import { Avatar } from './Avatar';
+import { defComments } from '../assets/mocks';
 
 interface PostProps {
-  author: string;
-  content: string;
+  id: number;
+  author: {
+    avatarUrl: string;
+    name: string;
+    role: string;
+  };
+  content: {
+    type: 'paragraph' | 'link';
+    content: string;
+    src?: string;
+  }[];
+  publishedAt: Date;
 }
 
 export function Post(props: PostProps) {
-  const randomDate = useMemo(() => {
-    return new Date(+new Date() - Math.floor(Math.random() * 10000000000));
-  }, []);
+  const [comments, setComments] = useState(defComments);
+  const [newCommentText, setNewCommentText] = useState('');
 
-  const distanceToNow = formatDistanceToNow(randomDate, { locale: ptBR });
-  const dateTime = randomDate.toISOString();
-  const formattedDate = format(randomDate, 'PPPppp', { locale: ptBR });
+  const { author, content, publishedAt } = props;
+  console.log(comments);
+
+  const distanceToNow = formatDistanceToNow(publishedAt, {
+    addSuffix: true,
+    locale: ptBR,
+  });
+  const formattedDate = format(publishedAt, 'PPPppp', { locale: ptBR });
+
+  function publishComment(e: FormEvent) {
+    e.preventDefault();
+
+    const arrayCopy = [...comments];
+    const lastID = arrayCopy.slice(-1)[0].id;
+
+    setComments([
+      ...comments,
+      {
+        id: comments.length > 0 ? lastID + 1 : 0,
+        author: {
+          name: 'User Name',
+          avatarUrl: 'https://i.pravatar.cc/64?u=DEFUSER',
+        },
+        content: newCommentText.trim(),
+        publishedAt: new Date(),
+      },
+    ]);
+
+    setNewCommentText('');
+  }
+
+  function handleCommentChange(e: ChangeEvent<HTMLTextAreaElement>) {
+    e.target.setCustomValidity("Esse campo é obrigatório!")
+    setNewCommentText(e.target.value);
+  }
+
+  function deleteComment(commentId: number) {
+    const filteredComments = comments.filter(({ id }) => id !== commentId);
+    setComments(filteredComments);
+  }
+
+  function handleTextareaKeydown(e: KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === 'Enter' && !e.shiftKey && !!newCommentText.trim()) {
+      publishComment(e);
+      e.currentTarget.value = '';
+    }
+    if (e.key == 'Enter' && e.shiftKey) {
+      e.preventDefault();
+      e.currentTarget.value += '\n';
+    }
+  }
+
+  function handleInvalidComment(e: InvalidEvent<HTMLTextAreaElement>) {
+    e.target.setCustomValidity("Esse campo é obrigatório!")
+  }
 
   return (
     <article className={styles.post}>
       <header>
         <div className={styles.author}>
-          <Avatar src="https://i.pravatar.cc/64" outlined />
+          <Avatar src={author.avatarUrl} outlined />
           <div className={styles.authorInfo}>
-            <strong>User name</strong>
-            <span>User Role</span>
+            <strong>{author.name}</strong>
+            <span>{author.role}</span>
           </div>
         </div>
-        <time dateTime={dateTime} title={formattedDate}>
-          Há {distanceToNow}
+        <time dateTime={publishedAt.toISOString()} title={formattedDate}>
+          {distanceToNow}
         </time>
       </header>
       <div className={styles.content}>
-        <p>Lorem Ipsum Dolor</p>
-        <p>Sit amet consectetur</p>
-        <p>
-          <a href="#">Adipiscing elit</a>{' '}
-        </p>
-        <p>
-          <a href="#">#loremipsum</a> <a href="#">#hashtag</a>{' '}
-          <a href="#">#dev</a>{' '}
-        </p>
+        {content.map((line) => {
+          if (line.type === 'link') {
+            return (
+              <p key={line.content}>
+                <a href={line.src}>{line.content}</a>
+              </p>
+            );
+          }
+          return <p key={line.content}>{line.content}</p>;
+        })}
       </div>
 
-      <form className={styles.commentForm}>
+      <form onSubmit={publishComment} className={styles.commentForm}>
         <strong>Deixe seu feedback</strong>
 
-        <textarea placeholder="Deixe um comentário" />
+        <textarea
+          name="comment"
+          placeholder="Deixe um comentário"
+          onChange={handleCommentChange}
+          onKeyDown={handleTextareaKeydown}
+          onInvalid={handleInvalidComment}
+          required
+        />
 
         <footer>
-          <button type="submit">Publicar</button>
+          <button type="submit" disabled={!newCommentText}>Publicar</button>
         </footer>
       </form>
 
       <div className={styles.commentList}>
-        <Comment />
-        <Comment />
-        <Comment />
+        {comments.map((comment) => (
+          <Comment
+            key={comment.id}
+            id={comment.id}
+            content={comment.content}
+            author={comment.author}
+            publishedAt={comment.publishedAt}
+            onCommentDelete={deleteComment}
+          />
+        ))}
       </div>
     </article>
   );

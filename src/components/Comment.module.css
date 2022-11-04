@@ -23,6 +23,15 @@
   justify-content: space-between;
 }
 
+.commentContent a {
+  font-weight: bold;
+  color: var(--green-300);
+}
+
+.commentContent a:hover {
+  color: var(--green-500);
+}
+
 .authorAndTimestamp strong {
   display: block;
   font-size: 0.875rem;
@@ -42,20 +51,21 @@
   color: var(--gray-400);
   cursor: pointer;
   line-height: 0;
-  border-radius: 4px;
-  transition: color 0.1s ease-in-out;
+  border-radius: 6px;
+  transition: color 0.1s ease-in-out, background-color 0.1s ease-in-out;
+  padding: 0.25rem;
 }
 
 .commentContent header button:hover {
   color: var(--red-500);
+  background: var(--gray-600);
 }
 
 .commentContent p {
   margin-top: 1rem;
   color: var(--gray-300);
+  white-space: pre-wrap;
 }
-
-
 
 .commentBox footer button {
   background: transparent;
@@ -72,7 +82,6 @@
 .commentBox footer button:hover {
   color: var(--green-300);
   background: var(--gray-700);
-
 }
 
 .commentBox footer button span {
